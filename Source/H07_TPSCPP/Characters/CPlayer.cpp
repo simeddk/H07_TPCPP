@@ -5,7 +5,8 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CStatusComponent.h"
 #include "Components/COptionComponent.h"
-#include "Components/CStateComponent.h"
+#include "Components/CMontageComponent.h"
+#include "Components/CActionComponent.h"
 
 ACPlayer::ACPlayer()
 {
@@ -23,6 +24,8 @@ ACPlayer::ACPlayer()
 	CHelpers::CreateActorComponent(this, &Status, "Status");
 	CHelpers::CreateActorComponent(this, &Option, "Option");
 	CHelpers::CreateActorComponent(this, &State, "State");
+	CHelpers::CreateActorComponent(this, &Montage, "Montage");
+	CHelpers::CreateActorComponent(this, &Action, "Action");
 
 	//------------------------------------------------------------------
 	//Component Settings
@@ -57,7 +60,7 @@ void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	CLog::Print("BeginPlay");
+	State->OnStateTypeChanged.AddDynamic(this, &ACPlayer::OnStateTypeChanged);
 }
 
 void ACPlayer::Tick(float DeltaTime)
@@ -80,6 +83,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	//Action Event
 	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, this, &ACPlayer::OffRun);
 	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, this, &ACPlayer::OnRun);
+	PlayerInputComponent->BindAction("Evade", EInputEvent::IE_Pressed, this, &ACPlayer::OnEvade);
+
 }
 
 void ACPlayer::OnMoveForward(float InAxis)
@@ -132,5 +137,61 @@ void ACPlayer::OnRun()
 void ACPlayer::OffRun()
 {
 	GetCharacterMovement()->MaxWalkSpeed = Status->GetWalkSpeed();
+}
+
+void ACPlayer::OnEvade()
+{
+	CheckFalse(State->IsIdleMode());
+	CheckFalse(Status->IsCanMove());
+
+	if (InputComponent->GetAxisValue("MoveForward") < 0.f)
+	{
+		State->SetBackStepMode();
+		return;
+	}
+
+	State->SetRollMode();
+}
+
+void ACPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
+{
+	switch (InNewType)
+	{
+		case EStateType::Roll:		Begin_Roll();		break;
+		case EStateType::BackStep:	Begin_BackStep();	break;
+	}
+}
+
+void ACPlayer::Begin_Roll()
+{
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	FVector start = GetActorLocation();
+	FVector target = start + GetVelocity().GetSafeNormal2D();
+	SetActorRotation(UKismetMathLibrary::FindLookAtRotation(start, target));
+
+	Montage->PlayRoll();
+}
+
+void ACPlayer::Begin_BackStep()
+{
+	bUseControllerRotationYaw = true;
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+
+	Montage->PlayBackStep();
+}
+
+void ACPlayer::End_Roll()
+{
+	State->SetIdleMode();
+}
+
+void ACPlayer::End_BackStep()
+{
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	State->SetIdleMode();
 }
 

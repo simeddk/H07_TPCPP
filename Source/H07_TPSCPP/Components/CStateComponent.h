@@ -7,7 +7,7 @@
 UENUM(BlueprintType)
 enum class EStateType : uint8
 {
-	Idle, Roll, BackStep
+	Idle, Roll, BackStep, Max
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FStateTypeChangedSignature, EStateType, InPrevType, EStateType, InNewType);
@@ -40,6 +40,8 @@ public: //Set State
 
 private:
 	void ChangeType(EStateType InNewType);
+
+	void PrintType();
 	
 public:
 	UPROPERTY(BlueprintAssignable)

@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Components/CStateComponent.h"
 #include "CPlayer.generated.h"
 
 UCLASS()
@@ -26,9 +27,10 @@ private: // Axis Event
 	void OnVerticalLook(float InAxis);
 	void OnZoom(float InAxis);
 
-private:
+private: //Action Event
 	void OnRun();
 	void OffRun();
+	void OnEvade();
 
 private: //Scene Component
 	UPROPERTY(VisibleDefaultsOnly)
@@ -46,4 +48,22 @@ private: //Actor Component
 
 	UPROPERTY(VisibleDefaultsOnly)
 		class UCStateComponent* State;
+
+	UPROPERTY(VisibleDefaultsOnly)
+		class UCMontageComponent* Montage;
+
+	UPROPERTY(VisibleDefaultsOnly)
+		class UCActionComponent* Action;
+
+private:
+	UFUNCTION()
+		void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
+
+private:
+	void Begin_Roll();
+	void Begin_BackStep();
+
+public:
+	void End_Roll();
+	void End_BackStep();
 };
