@@ -27,7 +27,7 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Mouse")
-		float HorizontalLookSpeed = 45.f;
+		float HorizontalLookSpeed = 90.f;
 
 	UPROPERTY(EditAnywhere, Category = "Mouse")
 		float VerticalLookSpeed = 45.f;

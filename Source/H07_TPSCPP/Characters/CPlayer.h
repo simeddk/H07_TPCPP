@@ -32,6 +32,10 @@ private: //Action Event
 	void OffRun();
 	void OnEvade();
 
+	void OnFist();
+	void OnOneHand();
+	void OnTwoHand();
+
 private: //Scene Component
 	UPROPERTY(VisibleDefaultsOnly)
 		class USpringArmComponent* SpringArm;

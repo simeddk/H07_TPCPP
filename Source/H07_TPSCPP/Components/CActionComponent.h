@@ -46,7 +46,7 @@ public:
 		FORCEINLINE bool IsStormMode() { return Type == EActionType::Storm; }
 
 	void SetUnaremdMode();
-	void SetFistdMode();
+	void SetFistMode();
 	void SetOneHandMode();
 	void SetTwoHandMode();
 	void SetWarpMode();
@@ -60,6 +60,10 @@ private:
 public:
 	UPROPERTY(BlueprintAssignable)
 		FActionTypeChangedSignature OnActionTypeChanged;
+
+private:
+	UPROPERTY(EditDefaultsOnly)
+		class UCActionData* Datas[(int32)EActionType::Max];
 
 private:
 	EActionType Type;

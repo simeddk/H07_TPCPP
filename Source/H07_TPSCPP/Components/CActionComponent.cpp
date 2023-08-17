@@ -1,4 +1,6 @@
 #include "CActionComponent.h"
+#include "Global.h"
+#include "Action/CActionData.h"
 
 UCActionComponent::UCActionComponent()
 {
@@ -10,7 +12,14 @@ void UCActionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
+	ACharacter* ownerCharacter = Cast<ACharacter>(GetOwner());
+	CheckNull(ownerCharacter);
+
+	for (int32 i = 0; i < (int32)EActionType::Max; i++)
+	{
+		if (!!Datas[i])
+			Datas[i]->BeginPlay(ownerCharacter);
+	}
 }
 
 void UCActionComponent::SetUnaremdMode()
@@ -18,7 +27,7 @@ void UCActionComponent::SetUnaremdMode()
 	ChangeType(EActionType::Unaremd);
 }
 
-void UCActionComponent::SetFistdMode()
+void UCActionComponent::SetFistMode()
 {
 	SetMode(EActionType::Fist);
 }

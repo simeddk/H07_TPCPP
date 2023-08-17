@@ -35,7 +35,7 @@ ACPlayer::ACPlayer()
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
 	
 	USkeletalMesh* meshAsset;
-	CHelpers::GetAsset<USkeletalMesh>(&meshAsset, "/Game/Character/Mesh/SK_Mannequin");
+	CHelpers::GetAsset<USkeletalMesh>(&meshAsset, "/Game/Character/Heraklios/Mesh/Heraklios_By_A__Dizon");
 	GetMesh()->SetSkeletalMesh(meshAsset);
 
 	TSubclassOf<UAnimInstance> animInstanceClass;
@@ -84,6 +84,9 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Pressed, this, &ACPlayer::OffRun);
 	PlayerInputComponent->BindAction("Walk", EInputEvent::IE_Released, this, &ACPlayer::OnRun);
 	PlayerInputComponent->BindAction("Evade", EInputEvent::IE_Pressed, this, &ACPlayer::OnEvade);
+	PlayerInputComponent->BindAction("Fist", EInputEvent::IE_Pressed, this, &ACPlayer::OnFist);
+	PlayerInputComponent->BindAction("OneHand", EInputEvent::IE_Pressed, this, &ACPlayer::OnOneHand);
+	PlayerInputComponent->BindAction("TwoHand", EInputEvent::IE_Pressed, this, &ACPlayer::OnTwoHand);
 
 }
 
@@ -151,6 +154,27 @@ void ACPlayer::OnEvade()
 	}
 
 	State->SetRollMode();
+}
+
+void ACPlayer::OnFist()
+{
+	CheckFalse(State->IsIdleMode());
+
+	Action->SetFistMode();
+}
+
+void ACPlayer::OnOneHand()
+{
+	CheckFalse(State->IsIdleMode());
+
+	Action->SetOneHandMode();
+}
+
+void ACPlayer::OnTwoHand()
+{
+	CheckFalse(State->IsIdleMode());
+
+	Action->SetTwoHandMode();
 }
 
 void ACPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
