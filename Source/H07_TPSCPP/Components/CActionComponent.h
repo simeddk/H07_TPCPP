@@ -25,6 +25,9 @@ protected:
 
 public:
 	UFUNCTION(BlueprintPure)
+		FORCEINLINE class UCActionData* GetCurrent() { return Datas[(int32)Type]; }
+
+	UFUNCTION(BlueprintPure)
 		FORCEINLINE bool IsUnaremdMode() { return Type == EActionType::Unaremd; }
 
 	UFUNCTION(BlueprintPure)
@@ -67,4 +70,5 @@ private:
 
 private:
 	EActionType Type;
+
 };

@@ -1,6 +1,8 @@
 #include "CActionComponent.h"
 #include "Global.h"
+#include "GameFramework/Character.h"
 #include "Action/CActionData.h"
+#include "Action/CEquipment.h"
 
 UCActionComponent::UCActionComponent()
 {
@@ -24,6 +26,11 @@ void UCActionComponent::BeginPlay()
 
 void UCActionComponent::SetUnaremdMode()
 {
+	if (!!Datas[(int32)Type] && !!Datas[(int32)Type]->GetEquipment())
+		Datas[(int32)Type]->GetEquipment()->Unequip();
+
+	Datas[(int32)EActionType::Unaremd]->GetEquipment()->Equip();
+
 	ChangeType(EActionType::Unaremd);
 }
 
@@ -64,6 +71,15 @@ void UCActionComponent::SetMode(EActionType InNewType)
 		SetUnaremdMode();
 		return;
 	}
+
+	else if (IsUnaremdMode() == false)
+	{
+		if (!!Datas[(int32)Type] && !!Datas[(int32)Type]->GetEquipment())
+			Datas[(int32)Type]->GetEquipment()->Unequip();
+	}
+
+	if (!!Datas[(int32)InNewType] && !!Datas[(int32)InNewType]->GetEquipment())
+		Datas[(int32)InNewType]->GetEquipment()->Equip();
 
 	ChangeType(InNewType);
 }

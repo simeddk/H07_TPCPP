@@ -7,6 +7,8 @@
 #include "Components/COptionComponent.h"
 #include "Components/CMontageComponent.h"
 #include "Components/CActionComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Action/CActionData.h"
 
 ACPlayer::ACPlayer()
 {
@@ -21,11 +23,11 @@ ACPlayer::ACPlayer()
 	//------------------------------------------------------------------
 	//Create Actor Component
 	//------------------------------------------------------------------
+	CHelpers::CreateActorComponent(this, &Action, "Action");
+	CHelpers::CreateActorComponent(this, &Montage, "Montage");
 	CHelpers::CreateActorComponent(this, &Status, "Status");
 	CHelpers::CreateActorComponent(this, &Option, "Option");
 	CHelpers::CreateActorComponent(this, &State, "State");
-	CHelpers::CreateActorComponent(this, &Montage, "Montage");
-	CHelpers::CreateActorComponent(this, &Action, "Action");
 
 	//------------------------------------------------------------------
 	//Component Settings
@@ -60,6 +62,9 @@ void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	DynamicMaterial = UMaterialInstanceDynamic::Create(GetMesh()->GetMaterial(0), nullptr);
+	GetMesh()->SetMaterial(0, DynamicMaterial);
+
 	State->OnStateTypeChanged.AddDynamic(this, &ACPlayer::OnStateTypeChanged);
 }
 
@@ -177,6 +182,11 @@ void ACPlayer::OnTwoHand()
 	Action->SetTwoHandMode();
 }
 
+void ACPlayer::ChangeColor(FLinearColor InColor)
+{
+	DynamicMaterial->SetVectorParameterValue("BodyColor", InColor);
+}
+
 void ACPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 {
 	switch (InNewType)
@@ -208,13 +218,22 @@ void ACPlayer::Begin_BackStep()
 
 void ACPlayer::End_Roll()
 {
+	if (Action->GetCurrent()->EquipmentData.bPawnControl == true)
+	{
+		bUseControllerRotationYaw = true;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+	}
+
 	State->SetIdleMode();
 }
 
 void ACPlayer::End_BackStep()
 {
-	bUseControllerRotationYaw = false;
-	GetCharacterMovement()->bOrientRotationToMovement = true;
+	if (Action->GetCurrent()->EquipmentData.bPawnControl == false)
+	{
+		bUseControllerRotationYaw = false;
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+	}
 
 	State->SetIdleMode();
 }

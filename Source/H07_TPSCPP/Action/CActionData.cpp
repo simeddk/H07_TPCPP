@@ -10,7 +10,22 @@ void UCActionData::BeginPlay(class ACharacter* InOwnerCharacter)
 	if (!!EquipmentClass)
 	{
 		Equipment = InOwnerCharacter->GetWorld()->SpawnActorDeferred<ACEquipment>(EquipmentClass, transform, InOwnerCharacter);
-		//Todo. 설명 더하기...
+		Equipment->AttachToComponent(InOwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+		Equipment->SetData(EquipmentData);
+		Equipment->SetColor(EquipmentColor);
+		Equipment->SetActorLabel(GetCustomLabelName(InOwnerCharacter, "Equipment"));
 		UGameplayStatics::FinishSpawningActor(Equipment, transform);
 	}
+}
+
+FString UCActionData::GetCustomLabelName(ACharacter* InOwnerCharacter, FString InMiddleName)
+{
+	FString labelName;
+	labelName.Append(InOwnerCharacter->GetActorLabel());
+	labelName.Append("_");
+	labelName.Append(InMiddleName);
+	labelName.Append("_");
+	labelName.Append(GetName().Replace(L"DA_", L""));
+
+	return labelName;
 }

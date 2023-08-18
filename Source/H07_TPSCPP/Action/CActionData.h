@@ -40,6 +40,12 @@ class H07_TPSCPP_API UCActionData : public UDataAsset
 public:
 	void BeginPlay(class ACharacter* InOwnerCharacter);
 
+private:
+	FString GetCustomLabelName(class ACharacter* InOwnerCharacter, FString InMiddleName);
+
+public:
+	FORCEINLINE class ACEquipment* GetEquipment() { return Equipment; }
+
 public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Equipment")
 		TSubclassOf<class ACEquipment> EquipmentClass;
@@ -48,7 +54,7 @@ public:
 		FEquipmentData EquipmentData;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Equipment")
-		FLinearColor EquipmentColor = FLinearColor(1, 1, 1);
+		FLinearColor EquipmentColor = FLinearColor(0, 0, 0);
 
 
 private:

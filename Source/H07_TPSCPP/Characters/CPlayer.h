@@ -3,10 +3,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Components/CStateComponent.h"
+#include "ICharacter.h"
 #include "CPlayer.generated.h"
 
 UCLASS()
-class H07_TPSCPP_API ACPlayer : public ACharacter
+class H07_TPSCPP_API ACPlayer : public ACharacter, public IICharacter
 {
 	GENERATED_BODY()
 
@@ -35,6 +36,9 @@ private: //Action Event
 	void OnFist();
 	void OnOneHand();
 	void OnTwoHand();
+
+public:
+	virtual void ChangeColor(FLinearColor InColor) override;
 
 private: //Scene Component
 	UPROPERTY(VisibleDefaultsOnly)
@@ -70,4 +74,7 @@ private:
 public:
 	void End_Roll();
 	void End_BackStep();
+
+private:
+	class UMaterialInstanceDynamic* DynamicMaterial;
 };
