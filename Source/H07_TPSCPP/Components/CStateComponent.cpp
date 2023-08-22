@@ -36,6 +36,11 @@ void UCStateComponent::SetEquipMode()
 	ChangeType(EStateType::Equip);
 }
 
+void UCStateComponent::SetActionMode()
+{
+	ChangeType(EStateType::Action);
+}
+
 void UCStateComponent::ChangeType(EStateType InNewType)
 {
 	EStateType prev = Type;
@@ -57,6 +62,8 @@ void UCStateComponent::PrintType()
 		case EStateType::Idle:		typeStr = "Idle";		break;
 		case EStateType::Roll:		typeStr = "Roll";		break;
 		case EStateType::BackStep:	typeStr = "BackStep";	break;
+		case EStateType::Equip:		typeStr = "Equip";		break;
+		case EStateType::Action:	typeStr = "Action";		break;
 	}
 	CLog::Log("CurrentState : " + typeStr);
 }

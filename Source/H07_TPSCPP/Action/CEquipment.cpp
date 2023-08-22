@@ -38,10 +38,7 @@ void ACEquipment::Equip_Implementation()
 		OwnerCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
 	}
 
-	if (Data.bCanMove == false)
-	{
-		StatusComp->SetStop();
-	}
+	Data.bCanMove ? StatusComp->SetMove() : StatusComp->SetStop();
 
 	IICharacter* characterInterface = Cast<IICharacter>(OwnerCharacter);
 	CheckNull(characterInterface);
@@ -64,5 +61,8 @@ void ACEquipment::Unequip_Implementation()
 {
 	OwnerCharacter->bUseControllerRotationYaw = false;
 	OwnerCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	if (OnUnequipmentDelegate.IsBound())
+		OnUnequipmentDelegate.Broadcast();
 }
 

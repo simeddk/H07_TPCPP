@@ -92,6 +92,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Fist", EInputEvent::IE_Pressed, this, &ACPlayer::OnFist);
 	PlayerInputComponent->BindAction("OneHand", EInputEvent::IE_Pressed, this, &ACPlayer::OnOneHand);
 	PlayerInputComponent->BindAction("TwoHand", EInputEvent::IE_Pressed, this, &ACPlayer::OnTwoHand);
+	PlayerInputComponent->BindAction("Action", EInputEvent::IE_Pressed, this, &ACPlayer::OnAction);
 
 }
 
@@ -180,6 +181,11 @@ void ACPlayer::OnTwoHand()
 	CheckFalse(State->IsIdleMode());
 
 	Action->SetTwoHandMode();
+}
+
+void ACPlayer::OnAction()
+{
+	Action->DoAction();
 }
 
 void ACPlayer::ChangeColor(FLinearColor InColor)

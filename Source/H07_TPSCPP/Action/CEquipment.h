@@ -6,6 +6,7 @@
 #include "CEquipment.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEquipmentDelegateSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUnequipmentDelegateSignature);
 
 UCLASS()
 class H07_TPSCPP_API ACEquipment : public AActor
@@ -46,6 +47,9 @@ public:
 public:
 	UPROPERTY(BlueprintAssignable)
 		FEquipmentDelegateSignature OnEquipmentDelegate;
+
+	UPROPERTY(BlueprintAssignable)
+		FUnequipmentDelegateSignature OnUnequipmentDelegate;
 
 protected:
 	UPROPERTY(BlueprintReadOnly)

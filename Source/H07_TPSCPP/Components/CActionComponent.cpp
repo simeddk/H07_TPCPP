@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "Action/CActionData.h"
 #include "Action/CEquipment.h"
+#include "Action/CDoAction.h"
 
 UCActionComponent::UCActionComponent()
 {
@@ -62,6 +63,19 @@ void UCActionComponent::SetMagicBallMode()
 void UCActionComponent::SetStormMode()
 {
 	SetMode(EActionType::Storm);
+}
+
+void UCActionComponent::DoAction()
+{
+	CheckTrue(IsUnaremdMode());
+
+	if (!!Datas[(int32)Type] && !!Datas[(int32)Type]->GetDoAction())
+	{
+		ACDoAction* doAction = Datas[(int32)Type]->GetDoAction();
+		
+		if (!!doAction)
+			doAction->DoAction();
+	}
 }
 
 void UCActionComponent::SetMode(EActionType InNewType)
