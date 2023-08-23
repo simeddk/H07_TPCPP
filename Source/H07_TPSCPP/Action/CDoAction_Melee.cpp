@@ -30,3 +30,22 @@ void ACDoAction_Melee::End_DoAction()
 	StateComp->SetIdleMode();
 	StatusComp->SetMove();
 }
+
+void ACDoAction_Melee::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InCauser, ACharacter* InOtherCharacter)
+{
+	Super::OnAttachmentBeginOverlap(InAttacker, InCauser, InOtherCharacter);
+
+	//Todo. 2323 대미지 주기....
+	FString attacker = InAttacker->GetName();
+	FString causer = InCauser->GetName();
+	FString otherCharacter = InOtherCharacter->GetName();
+
+	CLog::Print("OtherCharacter : " + otherCharacter);
+	CLog::Print("Causer : " + causer);
+	CLog::Print("Attacker : " + attacker);
+}
+
+void ACDoAction_Melee::OnAttachmentEndOverlap(ACharacter* InAttacker, AActor* InCauser, ACharacter* InOtherCharacter)
+{
+	Super::OnAttachmentEndOverlap(InAttacker, InCauser, InOtherCharacter);
+}
