@@ -45,6 +45,11 @@ void UCMontageComponent::PlayBackStep()
 	PlayAnimMontage(EStateType::BackStep);
 }
 
+void UCMontageComponent::PlayHitted()
+{
+	PlayAnimMontage(EStateType::Hitted);
+}
+
 void UCMontageComponent::PlayAnimMontage(EStateType InStateType)
 {
 	ACharacter* character = Cast<ACharacter>(GetOwner());

@@ -41,6 +41,16 @@ void UCStateComponent::SetActionMode()
 	ChangeType(EStateType::Action);
 }
 
+void UCStateComponent::SetHittedMode()
+{
+	ChangeType(EStateType::Hitted);
+}
+
+void UCStateComponent::SetDeadMode()
+{
+	ChangeType(EStateType::Dead);
+}
+
 void UCStateComponent::ChangeType(EStateType InNewType)
 {
 	EStateType prev = Type;
@@ -64,6 +74,9 @@ void UCStateComponent::PrintType()
 		case EStateType::BackStep:	typeStr = "BackStep";	break;
 		case EStateType::Equip:		typeStr = "Equip";		break;
 		case EStateType::Action:	typeStr = "Action";		break;
+		case EStateType::Hitted:	typeStr = "Hitted";		break;
+		case EStateType::Dead:		typeStr = "Dead";		break;
 	}
-	CLog::Log("CurrentState : " + typeStr);
+	
+	CLog::Log(GetOwner()->GetActorLabel() + " : "  + typeStr);
 }

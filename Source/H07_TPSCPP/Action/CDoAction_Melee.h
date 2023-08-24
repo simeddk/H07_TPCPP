@@ -8,7 +8,7 @@ UCLASS()
 class H07_TPSCPP_API ACDoAction_Melee : public ACDoAction
 {
 	GENERATED_BODY()
-	
+
 public:
 	virtual void DoAction() override;
 	virtual void Begin_DoAction() override;
@@ -17,4 +17,17 @@ public:
 	virtual void OnAttachmentBeginOverlap(class ACharacter* InAttacker, class AActor* InCauser, class ACharacter* InOtherCharacter) override;
 	virtual void OnAttachmentEndOverlap(class ACharacter* InAttacker, class AActor* InCauser, class ACharacter* InOtherCharacter) override;
 
+public:
+	FORCEINLINE void EnableCombo() { bCanCombo = true; }
+	FORCEINLINE void DisableCombo() { bCanCombo = false; }
+	FORCEINLINE void ClearHittedCharacters() { HittedCharacters.Empty(); }
+
+
+private:
+	int32 ComboCount;
+
+	bool bCanCombo;
+	bool bSucceed;
+
+	TArray<class ACharacter*> HittedCharacters;
 };

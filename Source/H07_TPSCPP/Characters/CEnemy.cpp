@@ -6,7 +6,6 @@
 #include "Components/CActionComponent.h"
 #include "Components/CMontageComponent.h"
 #include "Components/CStatusComponent.h"
-#include "Components/CStateComponent.h"
 #include "Widgets/CNameWidget.h"
 #include "Widgets/CHealthWidget.h"
 
@@ -68,6 +67,8 @@ void ACEnemy::BeginPlay()
 	GetMesh()->SetMaterial(0, LowerBodyMaterial);
 	GetMesh()->SetMaterial(1, UpperBodyMaterial);
 
+	State->OnStateTypeChanged.AddDynamic(this, &ACEnemy::OnStateTypeChanged);
+
 	Super::BeginPlay();
 
 	NameWidget->InitWidget();
@@ -81,9 +82,82 @@ void ACEnemy::BeginPlay()
 		healthWidgetObject->Update(Status->GetCurrentHealth(), Status->GetMaxHealth());
 }
 
+float ACEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	DamageValue = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	Attacker = Cast<ACharacter>(EventInstigator->GetPawn());
+	Causer = DamageCauser;
+
+	Status->DecreaseHealth(DamageValue);
+
+	//Dead
+	if (Status->GetCurrentHealth() <= 0)
+	{
+		State->SetDeadMode();
+
+		return DamageValue;
+	}
+
+	//Hitted
+	State->SetHittedMode();
+
+	return DamageValue;
+}
+
+void ACEnemy::Hitted()
+{
+	//Adjust HeathWidget
+	UCHealthWidget* healthWidgetObject = Cast<UCHealthWidget>(HealthWidget->GetUserWidgetObject());
+	if (!!healthWidgetObject)
+		healthWidgetObject->Update(Status->GetCurrentHealth(), Status->GetMaxHealth());
+
+	//Play Hitted Montage
+	Montage->PlayHitted();
+
+	//Look At Attacker
+	FVector start = GetActorLocation();
+	FVector target = Attacker->GetActorLocation();
+	SetActorRotation(UKismetMathLibrary::FindLookAtRotation(start, target));
+
+	//Hit Back
+	FVector direction = (start - target).GetSafeNormal();
+	LaunchCharacter(direction * LaunchValue * DamageValue, true, false);
+
+	//Change Hitted Color
+	ChangeColor(FLinearColor::Red);
+	UKismetSystemLibrary::K2_SetTimer(this, "RestoreColor", 0.2f, false);
+	
+}
+
+void ACEnemy::Dead()
+{
+}
+
 void ACEnemy::ChangeColor(FLinearColor InColor)
 {
+	if (State->IsHittedMode())
+	{
+		LowerBodyMaterial->SetVectorParameterValue("BodyColor", InColor);
+		UpperBodyMaterial->SetVectorParameterValue("BodyColor", InColor);
+		return;
+	}
+
 	LowerBodyMaterial->SetVectorParameterValue("Emissive", InColor);
 	UpperBodyMaterial->SetVectorParameterValue("Emissive", InColor);
+}
+
+void ACEnemy::RestoreColor()
+{
+	LowerBodyMaterial->SetVectorParameterValue("BodyColor", FLinearColor::Black);
+	UpperBodyMaterial->SetVectorParameterValue("BodyColor", FLinearColor::Black);
+}
+
+void ACEnemy::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
+{
+	switch (InNewType)
+	{
+		case EStateType::Hitted:	Hitted();	break;
+		case EStateType::Dead:		Dead();		break;
+	}
 }
 
