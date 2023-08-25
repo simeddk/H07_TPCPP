@@ -24,6 +24,9 @@ private:
 	void Hitted();
 	void Dead();
 
+	UFUNCTION()
+		void End_Dead();
+
 public:
 	virtual void ChangeColor(FLinearColor InColor) override;
 

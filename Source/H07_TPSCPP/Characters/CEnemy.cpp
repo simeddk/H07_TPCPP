@@ -3,6 +3,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Components/WidgetComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/CActionComponent.h"
 #include "Components/CMontageComponent.h"
 #include "Components/CStatusComponent.h"
@@ -131,6 +132,33 @@ void ACEnemy::Hitted()
 
 void ACEnemy::Dead()
 {
+	//Widget Visiblilty False
+	NameWidget->SetVisibility(false);
+	HealthWidget->SetVisibility(false);
+
+	//All Attachment Collision Disable
+	Action->Dead();
+
+	//Ragdoll
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->GlobalAnimRateScale = 0.f;
+
+	//AddForce
+	FVector start = Attacker->GetActorLocation();
+	FVector target = GetActorLocation();
+	FVector direction = (target - start).GetSafeNormal();
+	FVector force = direction * DamageValue * LaunchValue;
+	GetMesh()->AddForceAtLocation(force, start);
+
+	//Destroy All
+	UKismetSystemLibrary::K2_SetTimer(this, "End_Dead", 5.f, false);
+}
+
+void ACEnemy::End_Dead()
+{
+	CLog::Print(GetActorLabel() + " Is Dead");
 }
 
 void ACEnemy::ChangeColor(FLinearColor InColor)

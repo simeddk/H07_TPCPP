@@ -22,6 +22,9 @@ public:
 	FORCEINLINE void DisableCombo() { bCanCombo = false; }
 	FORCEINLINE void ClearHittedCharacters() { HittedCharacters.Empty(); }
 
+private:
+	UFUNCTION()
+		void RestoreGlobalTimeDilation();
 
 private:
 	int32 ComboCount;

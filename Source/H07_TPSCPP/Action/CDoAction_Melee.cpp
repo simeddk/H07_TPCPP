@@ -56,15 +56,42 @@ void ACDoAction_Melee::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* 
 {
 	Super::OnAttachmentBeginOverlap(InAttacker, InCauser, InOtherCharacter);
 
+	//Add Hitted Characters
 	int32 hittedCharactersNum = HittedCharacters.Num();
 	HittedCharacters.AddUnique(InOtherCharacter);
 
-	//Todo. HitStop
-
+	//Check New Hitted Character
 	if (hittedCharactersNum < HittedCharacters.Num())
 	{
-		FDamageEvent damageEvent;
+		//Hit Stop
+		float hitStop = Datas[ComboCount].HitStop;
+		if (FMath::IsNearlyZero(hitStop) == false)
+		{
+			UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 2e-2f);
+			UKismetSystemLibrary::K2_SetTimer(this, "RestoreGlobalTimeDilation", 2e-2f * hitStop, false);
+		}
 
+		//Play Particle
+		UParticleSystem* particle = Datas[ComboCount].Effect;
+		if (!!particle)
+		{
+			FTransform transform = Datas[ComboCount].EffectTransform;
+			transform.AddToTranslation(InOtherCharacter->GetActorLocation());
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), particle, transform);
+		}
+
+		//Play CameraShake
+		TSubclassOf<UCameraShake> shake = Datas[ComboCount].ShakeClass;
+		if (!!shake)
+		{
+			APlayerController* controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+			if (!!controller)
+				controller->PlayerCameraManager->PlayCameraShake(shake);
+		}
+
+
+		//Take Damage
+		FDamageEvent damageEvent;
 		InOtherCharacter->TakeDamage
 		(
 			Datas[ComboCount].Power,
@@ -79,4 +106,9 @@ void ACDoAction_Melee::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* 
 void ACDoAction_Melee::OnAttachmentEndOverlap(ACharacter* InAttacker, AActor* InCauser, ACharacter* InOtherCharacter)
 {
 	Super::OnAttachmentEndOverlap(InAttacker, InCauser, InOtherCharacter);
+}
+
+void ACDoAction_Melee::RestoreGlobalTimeDilation()
+{
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
 }

@@ -59,9 +59,13 @@ public:
 public:
 	void DoAction();
 
+	void Dead();
+
 private:
 	void SetMode(EActionType InNewType);
 	void ChangeType(EActionType InNewType);
+
+	void OffAllCollisions();
 			
 public:
 	UPROPERTY(BlueprintAssignable)

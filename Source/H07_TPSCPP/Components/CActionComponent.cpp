@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "Action/CActionData.h"
 #include "Action/CEquipment.h"
+#include "Action/CAttachment.h"
 #include "Action/CDoAction.h"
 
 UCActionComponent::UCActionComponent()
@@ -78,6 +79,11 @@ void UCActionComponent::DoAction()
 	}
 }
 
+void UCActionComponent::Dead()
+{
+	OffAllCollisions();
+}
+
 void UCActionComponent::SetMode(EActionType InNewType)
 {
 	if (Type == InNewType)
@@ -105,4 +111,18 @@ void UCActionComponent::ChangeType(EActionType InNewType)
 
 	if (OnActionTypeChanged.IsBound())
 		OnActionTypeChanged.Broadcast(prevType, InNewType);
+}
+
+void UCActionComponent::OffAllCollisions()
+{
+	for (const auto& data : Datas)
+	{
+		if (data == nullptr)
+			continue;
+
+		if (data->GetAttachment() == nullptr)
+			continue;
+
+		data->GetAttachment()->OffCollisions();
+	}
 }
