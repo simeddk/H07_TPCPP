@@ -79,6 +79,19 @@ void UCActionComponent::DoAction()
 	}
 }
 
+void UCActionComponent::DoAim(bool bAiming)
+{
+	CheckTrue(IsUnaremdMode());
+
+	if (!!Datas[(int32)Type] && !!Datas[(int32)Type]->GetDoAction())
+	{
+		ACDoAction* doAction = Datas[(int32)Type]->GetDoAction();
+
+		if (!!doAction)
+			bAiming ? doAction->OnAim() : doAction->OffAim();
+	}
+}
+
 void UCActionComponent::Dead()
 {
 	OffAllCollisions();

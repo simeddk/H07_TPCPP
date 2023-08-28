@@ -33,6 +33,9 @@ public:
 	virtual void Begin_DoAction() {};
 	virtual void End_DoAction() {};
 
+	virtual void OnAim() {};
+	virtual void OffAim() {};
+
 protected:
 	UPROPERTY(BlueprintReadOnly)
 		class ACharacter* OwnerCharacter;

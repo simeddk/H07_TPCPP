@@ -92,7 +92,10 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Fist", EInputEvent::IE_Pressed, this, &ACPlayer::OnFist);
 	PlayerInputComponent->BindAction("OneHand", EInputEvent::IE_Pressed, this, &ACPlayer::OnOneHand);
 	PlayerInputComponent->BindAction("TwoHand", EInputEvent::IE_Pressed, this, &ACPlayer::OnTwoHand);
+	PlayerInputComponent->BindAction("MagicBall", EInputEvent::IE_Pressed, this, &ACPlayer::OnMagicBall);
 	PlayerInputComponent->BindAction("Action", EInputEvent::IE_Pressed, this, &ACPlayer::OnAction);
+	PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Pressed, this, &ACPlayer::OnAim);
+	PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Released, this, &ACPlayer::OffAim);
 
 }
 
@@ -183,9 +186,26 @@ void ACPlayer::OnTwoHand()
 	Action->SetTwoHandMode();
 }
 
+void ACPlayer::OnMagicBall()
+{
+	CheckFalse(State->IsIdleMode());
+
+	Action->SetMagicBallMode();
+}
+
 void ACPlayer::OnAction()
 {
 	Action->DoAction();
+}
+
+void ACPlayer::OnAim()
+{
+	Action->DoAim(true);
+}
+
+void ACPlayer::OffAim()
+{
+	Action->DoAim(false);
 }
 
 void ACPlayer::ChangeColor(FLinearColor InColor)

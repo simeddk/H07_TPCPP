@@ -58,6 +58,7 @@ public:
 
 public:
 	void DoAction();
+	void DoAim(bool bAiming);
 
 	void Dead();
 
